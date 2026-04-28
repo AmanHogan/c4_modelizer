@@ -93,16 +93,16 @@ function App() {
   // --- Node size store (user-resized blocks) ---
   const { getSize: getNodeSize } = useNodeSizeStore();
 
-  // Apply any user-saved custom sizes to the SDK nodes
+  // Always give every C4 node an explicit width (and height if saved) so
+  // NodeResizer has known dimensions to anchor its handles to.
   const sizedCurrentNodes: Node[] = currentNodes.map((node) => {
     const saved = getNodeSize(node.id);
-    if (!saved) return node;
     return {
       ...node,
       style: {
         ...node.style,
-        width: saved.width,
-        ...(saved.height !== undefined ? { height: saved.height } : {}),
+        width: saved?.width ?? 250,
+        ...(saved?.height !== undefined ? { height: saved.height } : {}),
       },
     };
   });
