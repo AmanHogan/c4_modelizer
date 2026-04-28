@@ -10,6 +10,9 @@ import {
   useFlatNodes,
   useFlatStore,
 } from "@archivisio/c4-modelizer-sdk";
+import { useGroupStore } from "@stores/groupStore";
+import { useNodeSizeStore } from "@stores/nodeSizeStore";
+import { Node } from "@xyflow/react";
 import CodeEditDialog from "@components/code/CodeEditDialog";
 import ConfirmDialog from "@components/common/ConfirmDialog";
 import ComponentEditDialog from "@components/component/ComponentEditDialog";
@@ -58,12 +61,13 @@ function App() {
   const { activeSystem, activeContainer, activeComponent } =
     useFlatActiveElements();
 
-  const { currentNodes, handleNodePositionChange } = useFlatNodes({
+  const { currentNodes, handleNodePositionChange: sdkHandleNodePositionChange } = useFlatNodes({
     onEditSystem: (id: string) => openEditDialog(id, false),
     onEditContainer: (id: string) => openEditDialog(id, true),
     onEditComponent: (id: string) => openEditDialog(id, false),
     onEditCode: (id: string) => openEditDialog(id, false),
   });
+
   const { getBlockById } = useFlatStore();
 
   const {
@@ -85,6 +89,75 @@ function App() {
   } = useFlatModelActions();
 
   const { handleExport, handleFileInputChange } = useFileOperations();
+
+  // --- Node size store (user-resized blocks) ---
+  const { getSize: getNodeSize } = useNodeSizeStore();
+
+  // Apply any user-saved custom sizes to the SDK nodes
+  const sizedCurrentNodes: Node[] = currentNodes.map((node) => {
+    const saved = getNodeSize(node.id);
+    if (!saved) return node;
+    return {
+      ...node,
+      style: {
+        ...node.style,
+        width: saved.width,
+        ...(saved.height !== undefined ? { height: saved.height } : {}),
+      },
+    };
+  });
+
+  // --- Group state ---
+  const { addGroup, updateGroup, removeGroup, getGroupsForView, getNextColor } = useGroupStore();
+
+  // A key that identifies the current view (level + active IDs) so groups are scoped per diagram view
+  const viewKey = `${model.viewLevel}:${model.activeSystemId ?? ""}:${model.activeContainerId ?? ""}:${model.activeComponentId ?? ""}`;
+
+  const groups = getGroupsForView(viewKey);
+
+  // Convert stored groups into React Flow nodes (rendered behind SDK nodes via zIndex: -1)
+  const groupNodes: Node[] = groups.map((g) => ({
+    id: g.id,
+    type: "group",
+    position: g.position,
+    style: { width: g.width, height: g.height },
+    zIndex: -1,
+    selectable: true,
+    draggable: true,
+    data: {
+      label: g.label,
+      color: g.color,
+      onDelete: (id: string) => removeGroup(id),
+    },
+  }));
+
+  const allNodes: Node[] = [...groupNodes, ...sizedCurrentNodes];
+
+  const handleNodePositionChange = (id: string, position: { x: number; y: number }) => {
+    if (id.startsWith("group-")) {
+      updateGroup(id, { position });
+    } else {
+      sdkHandleNodePositionChange(id, position);
+    }
+  };
+
+  const handleAddGroup = () => {
+    const id = `group-${Date.now()}`;
+    const color = getNextColor(viewKey);
+    addGroup({
+      id,
+      label: "Group",
+      position: { x: 80, y: 80 },
+      width: 420,
+      height: 300,
+      color,
+      viewKey,
+    });
+  };
+
+  const handleGroupDelete = (id: string) => {
+    removeGroup(id);
+  };
 
   const handleCloneDoubleClick = (
     block: SystemBlock | ContainerBlock | ComponentBlock | CodeBlock
@@ -145,6 +218,7 @@ function App() {
       <Box sx={{ height: "100vh", bgcolor: "#0a1929", color: "#fff" }}>
         <ToolbarSlot
           onAddSystem={handleAddElement}
+          onAddGroup={handleAddGroup}
           onExport={handleExport}
           onImport={handleImport}
           onReset={handleOpenResetDialog}
@@ -171,13 +245,14 @@ function App() {
         />
 
         <FlowCanvas
-          nodes={currentNodes}
+          nodes={allNodes}
           edges={edges}
           onConnect={onConnect}
           onNodePositionChange={handleNodePositionChange}
           viewLevel={model.viewLevel}
           onNodeDoubleClick={handleNodeDoubleClick}
           onEdgeClick={handleEdgeClick}
+          onGroupDelete={handleGroupDelete}
         />
 
         {model.viewLevel === "system" && editingElement && (

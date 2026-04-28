@@ -1,10 +1,11 @@
 import { getTechnologyById } from "@data/technologies";
 import { useClonePath, useFlatModelActions, BaseBlock } from "@archivisio/c4-modelizer-sdk";
 import { ColorStyle } from "@theme/theme";
+import { useNodeSizeStore } from "@stores/nodeSizeStore";
 import EditIcon from "@mui/icons-material/Edit";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Tooltip, Typography, useTheme } from "@mui/material";
-import { Handle, Position } from "@xyflow/react";
+import { Handle, NodeResizer, Position, ResizeParams } from "@xyflow/react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TechnologyIcon from "../TechnologyIcon";
@@ -62,6 +63,14 @@ const C4Block: React.FC<C4BlockProps> = ({
   const [title, setTitle] = useState(name);
   const clonePath = useClonePath(item);
   const isClone = item.original;
+
+  const { getSize, setSize } = useNodeSizeStore();
+  const customSize = getSize(item.id);
+  const hasCustomHeight = !!customSize?.height;
+
+  const handleResizeEnd = (_: unknown, params: ResizeParams) => {
+    setSize(item.id, { width: params.width, height: params.height });
+  };
   const defaultColorStyle = colors;
   const colorStyles: ColorStyle = techData
     ? {
@@ -89,6 +98,20 @@ const C4Block: React.FC<C4BlockProps> = ({
 
   return (
     <>
+      <NodeResizer
+        isVisible={selected}
+        minWidth={180}
+        minHeight={60}
+        onResizeEnd={handleResizeEnd}
+        lineStyle={{ border: "1px solid rgba(255,255,255,0.25)" }}
+        handleStyle={{
+          width: 9,
+          height: 9,
+          border: `2px solid ${colorStyles.border}`,
+          background: "#0a1929",
+          borderRadius: 2,
+        }}
+      />
       {Array.isArray(handlePositions.target) ? (
         handlePositions.target.map((position: Position, index: number) => (
           <Handle
@@ -109,11 +132,16 @@ const C4Block: React.FC<C4BlockProps> = ({
           style={createHandleStyle(colorStyles)}
         />
       )}
-      <BlockContainer sx={{ opacity: item.original ? 0.5 : 1 }}>
+      <BlockContainer
+        sx={{
+          opacity: item.original ? 0.5 : 1,
+          height: hasCustomHeight ? "100%" : "auto",
+        }}
+      >
         <StyledCard
           colorstyles={colorStyles}
           selected={selected}
-          data-has-description={description ? "true" : "false"}
+          hascustomheight={hasCustomHeight ? "true" : undefined}
           className="tech-card"
         >
           <StyledCardContent>
@@ -154,15 +182,12 @@ const C4Block: React.FC<C4BlockProps> = ({
                       autoFocus
                     />
                   ) : (
-                    <Tooltip title={title} arrow>
-                      <Typography
-                        noWrap
-                        variant="subtitle1"
-                        data-testid="block-title"
-                      >
-                        {title}
-                      </Typography>
-                    </Tooltip>
+                    <Typography
+                      variant="subtitle1"
+                      data-testid="block-title"
+                    >
+                      {title}
+                    </Typography>
                   )}
                 </BlockTitle>
               </TitleContainer>

@@ -27,6 +27,7 @@ import { useFlatStore, useFlatC4Store, ViewLevel } from "@archivisio/c4-modelize
 import CodeBlock from "./code/CodeBlock";
 import ComponentBlock from "./component/ComponentBlock";
 import ContainerBlock from "./container/ContainerBlock";
+import GroupBlock from "./group/GroupBlock";
 import SystemBlock from "./system/SystemBlock";
 import TechnologyEdge from "./TechnologyEdge";
 
@@ -80,6 +81,7 @@ interface FlowCanvasProps {
   viewLevel: ViewLevel;
   onNodeDoubleClick?: (nodeId: string) => void;
   onEdgeClick?: (event: React.MouseEvent, edge: Edge) => void;
+  onGroupDelete?: (id: string) => void;
 }
 
 const nodeTypes = {
@@ -87,6 +89,7 @@ const nodeTypes = {
   container: ContainerBlock,
   component: ComponentBlock,
   code: CodeBlock,
+  group: GroupBlock,
 };
 
 const edgeTypes = {
@@ -125,6 +128,7 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
   onNodePositionChange,
   onNodeDoubleClick,
   onEdgeClick,
+  onGroupDelete,
 }) => {
   const [isSelectionMode, setIsSelectionMode] = useState(true);
   const { setPendingConnection } = useDialogs();
@@ -156,6 +160,8 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
   const handleNodeDoubleClick = useCallback(
     (event: React.MouseEvent, node: Node) => {
       event.preventDefault();
+      // Group nodes handle their own double-click (label editing)
+      if (node.type === "group") return;
 
       if (onNodeDoubleClick) {
         onNodeDoubleClick(node.id);
@@ -168,7 +174,9 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
   const handleDeleteNode = useCallback(
     ({ nodes }: { nodes: Node[]; edges: Edge[] }) => {
       nodes.forEach((node) => {
-        if (node.type === "system") {
+        if (node.type === "group") {
+          onGroupDelete?.(node.id);
+        } else if (node.type === "system") {
           removeSystem(node.id);
         } else if (node.type === "container") {
           removeContainer(node.id);
@@ -179,7 +187,7 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
         }
       });
     },
-    [removeCodeElement, removeComponent, removeContainer, removeSystem]
+    [onGroupDelete, removeCodeElement, removeComponent, removeContainer, removeSystem]
   );
 
   const defaultEdgeOptions = defaultEdgeStyle;

@@ -1,6 +1,7 @@
 import { FlatC4Model } from "@archivisio/c4-modelizer-sdk";
 import { ToolbarIconButton } from "@components/common/ToolbarIconButton";
 import AddIcon from "@mui/icons-material/Add";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -35,6 +36,7 @@ const HiddenInput = styled("input")(() => ({
 
 export interface ToolbarProps {
   onAddSystem: () => void;
+  onAddGroup: () => void;
   onExport: () => void;
   onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onReset: () => void;
@@ -43,7 +45,7 @@ export interface ToolbarProps {
 
 const Toolbar = forwardRef<HTMLButtonElement, ToolbarProps>(
   (
-    { onAddSystem, onExport, onImport, onReset, model }: ToolbarProps,
+    { onAddSystem, onAddGroup, onExport, onImport, onReset, model }: ToolbarProps,
     resetButtonRef: React.Ref<HTMLButtonElement>
   ) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -64,6 +66,17 @@ const Toolbar = forwardRef<HTMLButtonElement, ToolbarProps>(
                 aria-label={t("add_block")}
               >
                 <AddIcon />
+              </ToolbarIconButton>
+            </div>
+          </Tooltip>
+          <Tooltip title="Add group" arrow>
+            <div>
+              <ToolbarIconButton
+                data-testid="toolbar-add-group"
+                onClick={onAddGroup}
+                aria-label="Add group"
+              >
+                <CheckBoxOutlineBlankIcon />
               </ToolbarIconButton>
             </div>
           </Tooltip>

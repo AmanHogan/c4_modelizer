@@ -24,6 +24,7 @@ export default defineConfig({
       '@plugins': path.resolve(__dirname, './src/plugins'),
       '@slots': path.resolve(__dirname, './src/slots'),
       '@theme': path.resolve(__dirname, './src/theme'),
+      '@stores': path.resolve(__dirname, './src/stores'),
     },
   },
 })

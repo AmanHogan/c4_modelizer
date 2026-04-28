@@ -16,15 +16,19 @@ export const hexToRgb = (hex: string): string => {
 export const BlockContainer = styled(Box)(() => ({
   backgroundColor: "#0a1929",
   borderRadius: 12,
+  width: "100%",
+  boxSizing: "border-box",
 }));
 
 export const StyledCard = styled(Card)<{
   colorstyles: ColorStyle;
   selected: boolean;
-  'data-has-description'?: string;
-}>(({ colorstyles, selected, ...props }) => ({
-  width: 250,
-  height: props['data-has-description'] === 'true' ? 120 : 80,
+  hascustomheight?: string; // "true" | undefined  — lowercase for DOM compat
+}>(({ colorstyles, selected, hascustomheight }) => ({
+  width: "100%",
+  height: hascustomheight === "true" ? "100%" : "auto",
+  minHeight: 70,
+  boxSizing: "border-box",
   borderRadius: 8,
   position: "relative",
   overflow: "hidden",
@@ -73,10 +77,9 @@ export const BlockTitle = styled(Box)(() => ({
   fontWeight: "bold",
   color: "#fff",
   textShadow: "0 0 10px rgba(255,255,255,0.3)",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-  maxWidth: "130px",
+  wordBreak: "break-word",
+  whiteSpace: "normal",
+  minWidth: 0,
 }));
 
 export const EditTitleInput = styled(TextField)(() => ({
@@ -149,13 +152,9 @@ export const DescriptionText = styled(Typography)(() => ({
   borderRadius: 4,
   backdropFilter: "blur(4px)",
   border: "1px solid rgba(255,255,255,0.1)",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  WebkitLineClamp: 3,
-  WebkitBoxOrient: "vertical",
-  lineHeight: "1.2em",
-  maxHeight: "3.6em",
-  display: "-webkit-box",
+  lineHeight: "1.4em",
+  wordBreak: "break-word",
+  whiteSpace: "pre-wrap",
 }));
 
 export const createHandleStyle = (
