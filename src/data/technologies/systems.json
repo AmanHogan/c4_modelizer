@@ -64,5 +64,23 @@
     "name": "Load Balancer",
     "color": "#26a69a",
     "levels": ["system"]
+  },
+  {
+    "id": "external-system",
+    "name": "External System",
+    "color": "#ff7043",
+    "levels": ["system"]
+  },
+  {
+    "id": "backend-system",
+    "name": "Backend System",
+    "color": "#7e57c2",
+    "levels": ["system"]
+  },
+  {
+    "id": "gateway-device",
+    "name": "Gateway Device",
+    "color": "#00acc1",
+    "levels": ["system"]
   }
 ]
