@@ -8,7 +8,8 @@ import {
   getBezierPath,
   type EdgeProps,
 } from "@xyflow/react";
-import React from "react";
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
 
 const ICON_SIZE = 18;
 
@@ -33,11 +34,11 @@ const EdgeLabel = styled("span")(() => ({
   fontWeight: 500,
   color: "#333",
   boxShadow: "0 1px 4px rgba(0,0,0,0.07)",
-  whiteSpace: "nowrap",
-  maxWidth: 70,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
   border: "1px solid #eee",
+  maxWidth: 160,
+  wordBreak: "break-word",
+  textAlign: "center",
+  display: "inline-block",
 }));
 
 const createEdgeStyle = (
@@ -80,6 +81,8 @@ const TechnologyEdge: React.FC<EdgeProps> = ({
   ...props
 }) => {
   const isBidirectional = props.data?.bidirectional === true;
+  const description = props.data?.description as string | undefined;
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
 
   const edgePathParams = {
     sourceX,
@@ -125,6 +128,21 @@ const TechnologyEdge: React.FC<EdgeProps> = ({
         markerEnd={markerEnd}
         style={createEdgeStyle(style, isBidirectional, technology)}
       />
+
+      {/* Wide invisible path so the whole arrow line is hoverable */}
+      {description && (
+        <path
+          d={edgePath}
+          fill="none"
+          stroke="transparent"
+          strokeWidth={20}
+          onMouseEnter={(e) => setTooltipPos({ x: e.clientX, y: e.clientY })}
+          onMouseMove={(e) => setTooltipPos({ x: e.clientX, y: e.clientY })}
+          onMouseLeave={() => setTooltipPos(null)}
+          style={{ cursor: "default" }}
+        />
+      )}
+
       <EdgeLabelRenderer>
         <EdgeLabelContainer
           style={{
@@ -148,6 +166,47 @@ const TechnologyEdge: React.FC<EdgeProps> = ({
           )}
         </EdgeLabelContainer>
       </EdgeLabelRenderer>
+
+      {/* Description tooltip — portalled to body so it escapes the SVG */}
+      {tooltipPos && description && ReactDOM.createPortal(
+        <div
+          style={{
+            position: "fixed",
+            left: tooltipPos.x + 14,
+            top: tooltipPos.y - 12,
+            background: "rgba(5, 25, 55, 0.97)",
+            border: "1px solid rgba(81, 162, 255, 0.35)",
+            borderRadius: 7,
+            padding: "8px 12px",
+            maxWidth: 300,
+            fontSize: 13,
+            color: "#cce4ff",
+            lineHeight: 1.55,
+            boxShadow: "0 6px 24px rgba(0,0,0,0.5)",
+            pointerEvents: "none",
+            zIndex: 99999,
+            backdropFilter: "blur(6px)",
+            wordBreak: "break-word",
+          }}
+        >
+          {props.label && (
+            <div
+              style={{
+                fontWeight: 600,
+                color: technology?.color ?? "#51a2ff",
+                marginBottom: 5,
+                fontSize: 12,
+                textTransform: "uppercase",
+                letterSpacing: "0.4px",
+              }}
+            >
+              {props.label as string}
+            </div>
+          )}
+          <div>{description}</div>
+        </div>,
+        document.body
+      )}
     </>
   );
 };
