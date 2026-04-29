@@ -67,6 +67,14 @@ button:focus-visible {
   }
 }
 
+/* Strip React Flow's default group-node background */
+.react-flow__node-group {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
 .react-flow__minimap {
   background-color: rgba(19, 47, 76, 0.9) !important;
   border: 1px solid rgba(81, 162, 255, 0.3) !important;
