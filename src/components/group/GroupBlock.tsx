@@ -77,13 +77,10 @@ const GroupBlock: React.FC<NodeProps> = ({ id, data, selected }) => {
         style={{
           width: "100%",
           height: "100%",
-          background: hexToRgba(borderColor, 0.06),
-          border: `1.5px solid ${hexToRgba(borderColor, selected ? 0.7 : 0.35)}`,
+          background: "transparent",
+          border: `2px ${selected ? "solid" : "dashed"} ${hexToRgba(borderColor, selected ? 0.9 : 0.6)}`,
           borderRadius: 8,
-          boxShadow: selected
-            ? `0 0 0 1px ${hexToRgba(borderColor, 0.4)}, inset 0 0 20px ${hexToRgba(borderColor, 0.04)}`
-            : `inset 0 0 20px ${hexToRgba(borderColor, 0.04)}`,
-          backdropFilter: "blur(2px)",
+          boxShadow: selected ? `0 0 0 1px ${hexToRgba(borderColor, 0.4)}` : "none",
           transition: "border-color 0.15s ease, box-shadow 0.15s ease",
           position: "relative",
           boxSizing: "border-box",
@@ -100,8 +97,8 @@ const GroupBlock: React.FC<NodeProps> = ({ id, data, selected }) => {
             alignItems: "center",
             justifyContent: "space-between",
             padding: "4px 8px 4px 10px",
-            background: hexToRgba(borderColor, 0.12),
-            borderBottom: `1px solid ${hexToRgba(borderColor, 0.2)}`,
+            background: hexToRgba(borderColor, 0.15),
+            borderBottom: `1px solid ${hexToRgba(borderColor, 0.4)}`,
             borderRadius: "6px 6px 0 0",
             minHeight: 30,
           }}

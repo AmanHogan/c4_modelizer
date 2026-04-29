@@ -27,6 +27,7 @@ interface GroupState {
   removeGroup: (id: string) => void;
   getGroupsForView: (viewKey: string) => Group[];
   getNextColor: (viewKey: string) => string;
+  setAllGroups: (groups: Group[]) => void;
 }
 
 export const useGroupStore = create<GroupState>()(
@@ -56,6 +57,8 @@ export const useGroupStore = create<GroupState>()(
         const viewGroups = get().groups.filter((g) => g.viewKey === viewKey);
         return GROUP_COLORS[viewGroups.length % GROUP_COLORS.length];
       },
+
+      setAllGroups: (groups) => set({ groups }),
     }),
     { name: "c4-groups" }
   )

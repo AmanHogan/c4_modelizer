@@ -40,5 +40,29 @@
     "name": "Zipkin",
     "color": "#f47e00",
     "levels": ["system", "container"]
+  },
+  {
+    "id": "loki",
+    "name": "Grafana Loki",
+    "color": "#f46800",
+    "levels": ["system", "container"]
+  },
+  {
+    "id": "alertmanager",
+    "name": "Alertmanager",
+    "color": "#e6522c",
+    "levels": ["system", "container"]
+  },
+  {
+    "id": "victoria-metrics",
+    "name": "VictoriaMetrics",
+    "color": "#621773",
+    "levels": ["system", "container"]
+  },
+  {
+    "id": "tempo",
+    "name": "Grafana Tempo",
+    "color": "#f46800",
+    "levels": ["system", "container"]
   }
 ]

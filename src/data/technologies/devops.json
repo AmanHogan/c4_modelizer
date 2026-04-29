@@ -52,5 +52,59 @@
     "name": "Helm",
     "color": "#2772e6",
     "levels": ["container", "connection"]
+  },
+  {
+    "id": "k3s",
+    "name": "k3s",
+    "color": "#326ce5",
+    "levels": ["system", "container"]
+  },
+  {
+    "id": "argocd",
+    "name": "ArgoCD",
+    "color": "#f46800",
+    "levels": ["system", "container"]
+  },
+  {
+    "id": "vagrant",
+    "name": "Vagrant",
+    "color": "#1563ff",
+    "levels": ["system", "container"]
+  },
+  {
+    "id": "traefik",
+    "name": "Traefik",
+    "color": "#24a1c1",
+    "levels": ["system", "container"]
+  },
+  {
+    "id": "istio",
+    "name": "Istio",
+    "color": "#466bb0",
+    "levels": ["system", "container"]
+  },
+  {
+    "id": "containerd",
+    "name": "containerd",
+    "color": "#575757",
+    "levels": ["container"]
+  },
+  {
+    "id": "flux",
+    "name": "Flux CD",
+    "color": "#5468ff",
+    "levels": ["system", "container"]
+  },
+  {
+    "id": "kustomize",
+    "name": "Kustomize",
+    "color": "#326ce5",
+    "levels": ["container"]
+  },
+  {
+    "id": "cert-manager",
+    "name": "cert-manager",
+    "color": "#326ce5",
+    "levels": ["container"]
   }
 ]

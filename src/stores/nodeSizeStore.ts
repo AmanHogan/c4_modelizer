@@ -11,6 +11,7 @@ interface NodeSizeState {
   setSize: (id: string, size: NodeSize) => void;
   getSize: (id: string) => NodeSize | undefined;
   removeSize: (id: string) => void;
+  setAllSizes: (sizes: Record<string, NodeSize>) => void;
 }
 
 export const useNodeSizeStore = create<NodeSizeState>()(
@@ -31,6 +32,8 @@ export const useNodeSizeStore = create<NodeSizeState>()(
           delete next[id];
           return { sizes: next };
         }),
+
+      setAllSizes: (sizes) => set({ sizes }),
     }),
     { name: "c4-node-sizes" }
   )

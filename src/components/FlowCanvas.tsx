@@ -32,7 +32,7 @@ import SystemBlock from "./system/SystemBlock";
 import TechnologyEdge from "./TechnologyEdge";
 
 const FlowCanvasContainer = styled(Box)(() => ({
-  width: "100vw",
+  width: "100%",
   height: "calc(100vh - 100px)",
   backgroundColor: "#0a1929",
 }));
