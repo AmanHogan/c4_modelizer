@@ -82,5 +82,11 @@
     "name": "Gateway Device",
     "color": "#00acc1",
     "levels": ["system"]
+  },
+  {
+    "id": "note",
+    "name": "Note",
+    "color": "#fdd835",
+    "levels": ["system", "container", "component", "code"]
   }
 ]

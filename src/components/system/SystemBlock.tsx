@@ -5,6 +5,7 @@ import { Position } from "@xyflow/react";
 
 export default function SystemBlock({
   data,
+  selected,
 }: NodeData<SystemBlockType>) {
   const theme = useTheme();
   return (
@@ -12,6 +13,7 @@ export default function SystemBlock({
       item={data}
       onEdit={data.onEdit}
       colors={theme.c4Colors.system}
+      selected={selected}
       handlePositions={{
         source: [Position.Right, Position.Bottom, Position.Left, Position.Top],
         target: [Position.Left, Position.Top, Position.Bottom, Position.Right],
